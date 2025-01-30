@@ -34,15 +34,14 @@ int main(){
                 if(front==-1){
                     cout<<"queue is undeflow\n";
                 }
-                else if(front>rear){
-                    front=-1;
-                    rear=-1;
-                    cout<<"queue is underflow\n";
-                }
                 else{
                     data=queue[front];
                     cout<<"the dequeued data is:"<<data<<endl;
                     front=front+1;
+                    if(front>rear){
+                    front=-1;
+                    rear=-1;
+                }
                 }
                 break;
             case 3:
