@@ -1,19 +1,13 @@
-//doubly circular linked list
+//singly  circrular linked list
 #include<iostream>
 #include<malloc.h>
 using namespace std;
 struct node{
     int info;
-    struct node *next,*prev;
+    struct node *next;
 };
-struct node *pnew,*pthis,*ptemp,*ptemp1,*head;
+struct node *pfirst=NULL,*pnew,*pthis,*ptemp,*plast;
 static int count=0;
-void headp(){
-    head=(struct node*)malloc(sizeof(struct node));
-    head->next=head;
-    head->prev=head;
-    head->info=0;
-}
 void create(){
     pnew=(struct node*)malloc(sizeof(struct node));
     cout<<"enter the data\n";
@@ -21,33 +15,27 @@ void create(){
     count++;
 }
 void insertatbeg(){
-    if(head->next==head){
-        head->next=pnew;
-        head->prev=pnew;
-        pnew->next=head;
-        pnew->prev=head;
+    if(pfirst==NULL){
+        pfirst=pnew;
+        plast=pnew;
+        pnew->next=pfirst;
     }
     else{
-        ptemp=head->next;
-        head->next=pnew;
-        pnew->prev=head;
-        pnew->next=ptemp;
-        ptemp->prev=pnew;
+        pnew->next=pfirst;
+        pfirst=pnew;
+        plast->next=pfirst;
     }
 }
 void insertatend(){
-    if(head->next==head){
-        head->next=pnew;
-        head->prev=pnew;
-        pnew->next=head;
-        pnew->prev=head;
+    if(pfirst==NULL){
+        pfirst=pnew;
+        plast=pnew;
+        pnew->next=pfirst;
     }
     else{
-        ptemp=head->prev;
-        head->prev=pnew;
-        pnew->next=head;
-        pnew->prev=ptemp;
-        ptemp->next=pnew;
+        plast->next=pnew;
+        plast=pnew;
+        plast->next=pfirst;
     }
 }
 void insert_before_sppos(){
@@ -55,21 +43,19 @@ void insert_before_sppos(){
     cout<<"enter the location\n";
     cin>>loc;
     if(loc==1){
-        insertatbeg(); 
+        insertatbeg();
     }
-    else if(loc>count||head->next==head||loc==0){
+    else if(loc>count||pfirst==NULL||loc==0){
         cout<<"invalid operation\n";
     }
     else{
-        pthis=head->next;
-        for(int i=1;i<loc;i++){
+        pthis=pfirst;
+        for(int i=1;i<loc-1;i++){
             pthis=pthis->next;
         }
-        ptemp=pthis->prev;
-        ptemp->next=pnew;       
-        pnew->prev=ptemp;
-        pnew->next=pthis;
-        pthis->prev=pnew;
+        ptemp=pthis->next;
+        pthis->next=pnew;
+        pnew->next=ptemp;
     }
 }
 void insert_after_sppos(){
@@ -79,72 +65,73 @@ void insert_after_sppos(){
     if(loc==count){
         insertatend();
     } 
-    else if(loc>count||head->next==NULL||loc==0){
+    else if(loc>count||pfirst==NULL||loc==0){
         cout<<"invalid operation\n";
     }
     else{
-        pthis=head->next;
+        pthis=pfirst;
         for(int i=1;i<loc;i++){
             pthis=pthis->next;
         }
         ptemp=pthis->next;
         pthis->next=pnew;
-        pnew->prev=pthis;
         pnew->next=ptemp;
-        ptemp->prev=pnew;
     }
 }
 void display(){
-    if(head->next==head){
-        cout<<"the list is empty\n";
+    if(pfirst==NULL){
+        cout<<"the list is empty";
     }
     else{
-        pthis=head->next;
-        while(pthis!=head){
-            cout<<pthis->info<<" ";
+        pthis=pfirst;
+        while(pthis->next!=pfirst){
+            cout<<pthis->info<<"\n";
             pthis=pthis->next;
         }
-        cout<<endl;
+        cout<<pthis->info<<endl;
     }
 }
 void deletionbeg(){
-    if(head->next==head){
+    if(pfirst==NULL){
         cout<<"the list is empty:";
     }
-    else if(head->next==head->prev){
-        cout<<"the deleted data is:"<<head->next->info<<endl;
+    else if(pfirst==plast){
+        cout<<"the deleted data is:"<<pfirst->info;
         count--;
-        free(head->next);
-        head->next=head;
-        head->prev=head;
+        free(pfirst);
+        pfirst=NULL;
+        plast=NULL;
     }
     else{
-        cout<<"the deleted data is:"<<head->next->info<<endl;
+        cout<<"the deleted data is:"<<pfirst->info<<endl;
         count--;
-        ptemp=head->next->next;
-        free(head->next);
-        head->next=ptemp;
-        ptemp->prev=head;
+        ptemp=pfirst->next;
+        free(pfirst);
+        pfirst=ptemp;
+        plast->next=pfirst;
     }
 }
 void deletionend(){
-    if(head->next==head){
+    if(pfirst==NULL){
         cout<<"the list is empty:";
     }
-    else if(head->next==head->prev){
-        cout<<"the deleted data is:"<<head->next->info<<endl;
+    else if(pfirst==plast){
+        cout<<"the deleted data is:"<<pfirst->info;
         count--;
-        free(head->next);
-        head->next=head;
-        head->prev=head;
-   }
+        free(pfirst);
+        pfirst=NULL;
+        plast=NULL;
+    }
     else{
-        ptemp=head->prev->prev;
-        cout<<"the deleted data is:"<<head->prev->info<<endl;
+        pthis=pfirst;
+        while(pthis->next!=plast){
+            pthis=pthis->next;
+        }
+        cout<<"the deleted data is:"<<pthis->next->info<<endl;
         count--;
-        free(head->prev);
-        head->prev=ptemp;
-        ptemp->next=head;
+        free(plast);
+        plast=pthis;
+        plast->next=pfirst;
     }
 }
 void delete_spec_node(){
@@ -161,23 +148,20 @@ void delete_spec_node(){
         deletionend();
     }
     else{
-        pthis=head->next;
-        for(int i=1;i<loc;i++){
+        pthis=pfirst;
+        for(int i =1;i<loc-1;i++){
             pthis=pthis->next;
         }
-        ptemp=pthis->prev;
-        ptemp1=pthis->next;
-        cout<<"the deleted data is:"<<pthis->info<<endl;
+        ptemp=pthis->next->next;
+        cout<<"the deleted data is:"<<pthis->next->info<<endl;
+        free(pthis->next);
         count--;
-        free(pthis);
-        ptemp->next=ptemp1;
-        ptemp1->prev=ptemp;
-        }
+        pthis->next=ptemp;
+    }
 }
 int main(){
     int n;
     char c;
-    headp();
     do{
         cout<<"1 insert at beg\n";
         cout<<"2 insert at end\n";
