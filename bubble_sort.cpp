@@ -19,7 +19,7 @@ int main(){
     cout<<endl;
     for(i=0;i<n-1;i++){
         cout<<i+1<<":pass"<<endl;
-        for(int k=0;k<n;k++){
+        for(int k=0;k<n;k++){ 
             cout<<arr[k]<<" ";
         }
         cout<<endl;
